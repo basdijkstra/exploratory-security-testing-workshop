@@ -25,7 +25,7 @@ public class TransactionTests {
     int port;
 
     private RequestSpecification requestSpec;
-    private String token;
+    private String aliceToken;
 
     @BeforeEach
 	public void createRequestSpecification() {
@@ -40,14 +40,25 @@ public class TransactionTests {
             setPort(port).
             build();
 
-        token = given().spec(requestSpec).body(new TokenRequest("alice", "alice123")).post("/auth/token").then().extract().path("accessToken");
+        aliceToken = given().spec(requestSpec).body(new TokenRequest("alice", "alice123")).post("/auth/token").then().extract().path("accessToken");
 	}
 
     @Test
-    public void getAllTransactionsForAlice_shouldReturnList() {
+    public void getAllTransactionsForAlice_withToken_shouldReturnHttp200() {
 
-        given().
-        spec(requestSpec).auth().oauth2(token).get("/transactions").then().log().all();
+        given().spec(requestSpec).auth().oauth2(aliceToken).when().get("/transactions").then().statusCode(200);    
+    }
+
+    @Test
+    public void getAllTransactionsForAlice_withoutToken_shouldReturnHttp401() {
+
+        given().spec(requestSpec).when().get("/transactions").then().statusCode(401);    
+    }
+
+    @Test
+    public void getTransactionsReport_withAliceToken_shouldReturnHttp403() {
+
+        given().spec(requestSpec).auth().oauth2(aliceToken).when().get("/transactions/report").then().statusCode(403);
     
     }
 
