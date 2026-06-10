@@ -64,3 +64,6 @@ fabric.properties
 
 # Pact-generated contract
 **/pacts/*
+
+# VS Code settings
+.vscode/

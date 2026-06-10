@@ -7,9 +7,12 @@ import com.ontestautomation.apisecurity.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/transactions")
@@ -44,7 +47,10 @@ public class TransactionController {
     }
 
     @GetMapping("/report")
-    public ResponseEntity<List<TransactionReport>> report() {
+    public ResponseEntity<?> report(Authentication auth) {
+        if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
         return ResponseEntity.ok(transactionService.generateReport());
     }
 }
