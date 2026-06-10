@@ -44,7 +44,7 @@ public class AccountService {
         var account = Account.builder()
                 .accountNumber(generateAccountNumber())
                 .type(request.type())
-                .balance(request.initialBalance() != null ? request.initialBalance() : java.math.BigDecimal.ZERO)
+                .balance(java.math.BigDecimal.ZERO)
                 .owner(owner)
                 .build();
 

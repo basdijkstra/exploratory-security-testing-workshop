@@ -71,7 +71,7 @@ Authorization: Bearer <jwt>
 |--------|------------------|------------------------------------|-----------------------------------------------|
 | GET    | /accounts        | List accounts                      | —                                             |
 | GET    | /accounts/{id}   | Get account by ID                  | —                                             |
-| POST   | /accounts        | Create a new account               | `{"type":"CHECKING","initialBalance":500.00}` |
+| POST   | /accounts        | Create a new account               | `{"type":"CHECKING"}`                         |
 | DELETE | /accounts/{id}   | Delete an account                  | —                                             |
 
 Account types: `CHECKING`, `SAVINGS`
