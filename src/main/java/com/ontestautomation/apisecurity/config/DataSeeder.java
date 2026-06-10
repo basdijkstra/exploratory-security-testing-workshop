@@ -1,0 +1,224 @@
+package com.ontestautomation.apisecurity.config;
+
+import com.ontestautomation.apisecurity.model.*;
+import com.ontestautomation.apisecurity.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Component
+@RequiredArgsConstructor
+public class DataSeeder implements ApplicationRunner {
+
+    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
+    private final LoanRepository loanRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public void run(ApplicationArguments args) {
+        seedUsers();
+        seedAccounts();
+        seedTransactions();
+        seedLoans();
+        printCredentials();
+    }
+
+    private void seedUsers() {
+        userRepository.save(User.builder()
+                .username("alice")
+                .email("alice@bank.example")
+                .passwordHash(passwordEncoder.encode("alice123"))
+                .role(Role.CUSTOMER)
+                .build());
+
+        userRepository.save(User.builder()
+                .username("bob")
+                .email("bob@bank.example")
+                .passwordHash(passwordEncoder.encode("bob123"))
+                .role(Role.CUSTOMER)
+                .build());
+
+        userRepository.save(User.builder()
+                .username("admin")
+                .email("admin@bank.example")
+                .passwordHash(passwordEncoder.encode("admin123"))
+                .role(Role.ADMIN)
+                .build());
+    }
+
+    private void seedAccounts() {
+        User alice = userRepository.findByUsername("alice").orElseThrow();
+        User bob   = userRepository.findByUsername("bob").orElseThrow();
+
+        // Alice: account IDs 1 and 2
+        accountRepository.save(Account.builder()
+                .accountNumber("NL10BANK0000000001")
+                .type(AccountType.CHECKING)
+                .balance(new BigDecimal("2500.00"))
+                .owner(alice)
+                .build());
+
+        accountRepository.save(Account.builder()
+                .accountNumber("NL10BANK0000000002")
+                .type(AccountType.SAVINGS)
+                .balance(new BigDecimal("12000.00"))
+                .owner(alice)
+                .build());
+
+        // Bob: account IDs 3 and 4
+        accountRepository.save(Account.builder()
+                .accountNumber("NL10BANK0000000003")
+                .type(AccountType.CHECKING)
+                .balance(new BigDecimal("1800.00"))
+                .owner(bob)
+                .build());
+
+        accountRepository.save(Account.builder()
+                .accountNumber("NL10BANK0000000004")
+                .type(AccountType.SAVINGS)
+                .balance(new BigDecimal("5500.00"))
+                .owner(bob)
+                .build());
+
+        // Payroll account owned by admin: account ID 5
+        User admin = userRepository.findByUsername("admin").orElseThrow();
+        accountRepository.save(Account.builder()
+                .accountNumber("NL10BANK0000000005")
+                .type(AccountType.CHECKING)
+                .balance(new BigDecimal("999999.00"))
+                .owner(admin)
+                .build());
+    }
+
+    private void seedTransactions() {
+        Account aliceChecking = accountRepository.findById(1L).orElseThrow();
+        Account aliceSavings  = accountRepository.findById(2L).orElseThrow();
+        Account bobChecking   = accountRepository.findById(3L).orElseThrow();
+        Account bobSavings    = accountRepository.findById(4L).orElseThrow();
+        Account payroll       = accountRepository.findById(5L).orElseThrow();
+
+        LocalDateTime base = LocalDateTime.now().minusDays(30);
+
+        transactionRepository.save(Transaction.builder()
+                .fromAccount(payroll)
+                .toAccount(aliceChecking)
+                .amount(new BigDecimal("3000.00"))
+                .description("Salary deposit")
+                .createdAt(base)
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .fromAccount(aliceChecking)
+                .toAccount(aliceSavings)
+                .amount(new BigDecimal("500.00"))
+                .description("Monthly savings transfer")
+                .createdAt(base.plusDays(1))
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .fromAccount(aliceChecking)
+                .toAccount(bobChecking)
+                .amount(new BigDecimal("120.00"))
+                .description("Dinner split")
+                .createdAt(base.plusDays(3))
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .fromAccount(payroll)
+                .toAccount(bobChecking)
+                .amount(new BigDecimal("3000.00"))
+                .description("Salary deposit")
+                .createdAt(base.plusDays(5))
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .fromAccount(bobChecking)
+                .toAccount(bobSavings)
+                .amount(new BigDecimal("300.00"))
+                .description("Monthly savings transfer")
+                .createdAt(base.plusDays(6))
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .fromAccount(aliceChecking)
+                .toAccount(bobChecking)
+                .amount(new BigDecimal("75.00"))
+                .description("Concert tickets")
+                .createdAt(base.plusDays(10))
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .fromAccount(bobChecking)
+                .toAccount(aliceChecking)
+                .amount(new BigDecimal("50.00"))
+                .description("Lunch refund")
+                .createdAt(base.plusDays(14))
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .fromAccount(aliceChecking)
+                .toAccount(null)
+                .amount(new BigDecimal("200.00"))
+                .description("ATM cash withdrawal")
+                .createdAt(base.plusDays(18))
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .fromAccount(bobChecking)
+                .toAccount(aliceChecking)
+                .amount(new BigDecimal("350.00"))
+                .description("Rent contribution")
+                .createdAt(base.plusDays(22))
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .fromAccount(aliceSavings)
+                .toAccount(aliceChecking)
+                .amount(new BigDecimal("1000.00"))
+                .description("Holiday fund withdrawal")
+                .createdAt(base.plusDays(25))
+                .build());
+    }
+
+    private void seedLoans() {
+        User alice = userRepository.findByUsername("alice").orElseThrow();
+        User bob   = userRepository.findByUsername("bob").orElseThrow();
+
+        loanRepository.save(Loan.builder()
+                .applicant(alice)
+                .amount(new BigDecimal("5000.00"))
+                .status(LoanStatus.PENDING)
+                .requestedAt(LocalDateTime.now().minusDays(5))
+                .build());
+
+        loanRepository.save(Loan.builder()
+                .applicant(bob)
+                .amount(new BigDecimal("15000.00"))
+                .status(LoanStatus.APPROVED)
+                .requestedAt(LocalDateTime.now().minusDays(20))
+                .build());
+    }
+
+    private void printCredentials() {
+        System.out.println("""
+
+                ╔═════════════════════════════════════════════════╗
+                ║          WORKSHOP SEED CREDENTIALS              ║
+                ╠═════════════════════════════════════════════════╣
+                ║  alice  / alice123  (CUSTOMER, accounts 1 & 2)  ║
+                ║  bob    / bob123    (CUSTOMER, accounts 3 & 4)  ║
+                ║  admin  / admin123  (ADMIN)                     ║
+                ╠═════════════════════════════════════════════════╣
+                ║  H2 console: http://localhost:8080/h2-console   ║
+                ║  JDBC URL:   jdbc:h2:mem:bankdb                 ║
+                ╚═════════════════════════════════════════════════╝
+                """);
+    }
+}

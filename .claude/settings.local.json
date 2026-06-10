@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item *)",
+      "Bash(curl -s -X POST http://localhost:8080/auth/token -H \"Content-Type: application/json\" -d \"{\\\\\"username\\\\\":\\\\\"alice\\\\\",\\\\\"password\\\\\":\\\\\"alice123\\\\\"}\")",
+      "Bash(curl *)",
+      "PowerShell(Start-Sleep -Seconds 15; Invoke-RestMethod -Uri \"http://localhost:8080/auth/token\" -Method POST -ContentType \"application/json\" -Body '{\"username\":\"alice\",\"password\":\"alice123\"}' | ConvertTo-Json)",
+      "PowerShell($pid = \\(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue\\).OwningProcess; if \\($pid\\) { Stop-Process -Id $pid -Force; Write-Output \"Killed PID $pid\" } else { Write-Output \"Nothing on 8080\" })",
+      "PowerShell($owningPid = \\(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue\\).OwningProcess; if \\($owningPid\\) { Stop-Process -Id $owningPid -Force; Write-Output \"Killed PID $owningPid\" } else { Write-Output \"Nothing on 8080\" })",
+      "PowerShell(Start-Sleep -Seconds 15; $response = Invoke-WebRequest -Uri \"http://localhost:8080/auth/token\" -Method POST -ContentType \"application/json\" -Body '{\"username\":\"alice\",\"password\":\"alice123\"}' -UseBasicParsing; Write-Output \"Status: $\\($response.StatusCode\\)\"; Write-Output \"Body: $\\($response.Content\\)\")",
+      "PowerShell(netstat *)",
+      "PowerShell(Stop-Process *)",
+      "PowerShell(Start-Sleep -Seconds 12; try { $r = Invoke-WebRequest -Uri \"http://localhost:8080/auth/token\" -Method POST -ContentType \"application/json\" -Body '{\"username\":\"alice\",\"password\":\"alice123\"}' -UseBasicParsing; Write-Output \"STATUS: $\\($r.StatusCode\\)\"; Write-Output \"BODY: $\\($r.Content\\)\" } catch { Write-Output \"FAILED: $_\" })",
+      "PowerShell(mvn package *)",
+      "PowerShell($owningPid = \\(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue\\).OwningProcess; if \\($owningPid\\) { Stop-Process -Id $owningPid -Force; Write-Output \"Killed $owningPid\" } else { Write-Output \"Nothing on 8080\" })"
+    ]
+  }
+}
