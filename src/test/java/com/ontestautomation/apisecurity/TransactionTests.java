@@ -26,6 +26,7 @@ public class TransactionTests {
 
     private RequestSpecification requestSpec;
     private String aliceToken;
+    private String adminToken;
 
     @BeforeEach
 	public void createRequestSpecification() {
@@ -41,25 +42,39 @@ public class TransactionTests {
             build();
 
         aliceToken = given().spec(requestSpec).body(new TokenRequest("alice", "alice123")).post("/auth/token").then().extract().path("accessToken");
+
+        adminToken = given().spec(requestSpec).body(new TokenRequest("admin", "admin123")).post("/auth/token").then().extract().path("accessToken");
 	}
 
     @Test
     public void getAllTransactionsForAlice_withToken_shouldReturnHttp200() {
 
-        given().spec(requestSpec).auth().oauth2(aliceToken).when().get("/transactions").then().statusCode(200);    
+        given().spec(requestSpec).auth().oauth2(aliceToken)
+        .when().get("/transactions")
+        .then().statusCode(200).body(not(emptyOrNullString()));    
     }
 
     @Test
     public void getAllTransactionsForAlice_withoutToken_shouldReturnHttp401() {
 
-        given().spec(requestSpec).when().get("/transactions").then().statusCode(401);    
+        given().spec(requestSpec)
+        .when().get("/transactions")
+        .then().statusCode(401).body(emptyOrNullString());    
     }
 
     @Test
     public void getTransactionsReport_withAliceToken_shouldReturnHttp403() {
 
-        given().spec(requestSpec).auth().oauth2(aliceToken).when().get("/transactions/report").then().statusCode(403);
-    
+        given().spec(requestSpec).auth().oauth2(aliceToken)
+        .when().get("/transactions/report")
+        .then().statusCode(403).body("error", equalTo("Admin access required"));    
     }
 
+    @Test
+    public void getTransactionsReport_withAdminToken_shouldReturnHttp200() {
+
+        given().spec(requestSpec).auth().oauth2(adminToken)
+        .when().get("/transactions/report")
+        .then().statusCode(200).body(not(emptyOrNullString()));    
+    }
 }
