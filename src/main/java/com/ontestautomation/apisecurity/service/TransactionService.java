@@ -46,7 +46,7 @@ public class TransactionService {
     // Payload example: ' OR 1=1--
     @SuppressWarnings("unchecked")
     public List<TransactionResponse> searchTransactions(String keyword) {
-        List<Long> accountIds = accountRepository.findByOwner(currentUser()).stream()
+        List<String> accountIds = accountRepository.findByOwner(currentUser()).stream()
                 .map(Account::getId)
                 .toList();
 
@@ -54,7 +54,7 @@ public class TransactionService {
             return List.of();
         }
 
-        String ids = accountIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+        String ids = accountIds.stream().map(id -> "'" + id + "'").collect(Collectors.joining(","));
         String sql = "SELECT * FROM transactions " +
                      "WHERE (from_account_id IN (" + ids + ") OR to_account_id IN (" + ids + ")) " +
                      "AND description LIKE '%" + keyword + "%'";

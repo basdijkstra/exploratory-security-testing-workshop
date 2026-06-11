@@ -57,8 +57,9 @@ public class DataSeeder implements ApplicationRunner {
         User alice = userRepository.findByUsername("alice").orElseThrow();
         User bob   = userRepository.findByUsername("bob").orElseThrow();
 
-        // Alice: account IDs 1 and 2
+        // Alice accounts
         accountRepository.save(Account.builder()
+                .id("account-714")
                 .accountNumber("NL10BANK0000000001")
                 .type(AccountType.CHECKING)
                 .balance(new BigDecimal("2500.00"))
@@ -66,14 +67,16 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         accountRepository.save(Account.builder()
+                .id("account-293")
                 .accountNumber("NL10BANK0000000002")
                 .type(AccountType.SAVINGS)
                 .balance(new BigDecimal("12000.00"))
                 .owner(alice)
                 .build());
 
-        // Bob: account IDs 3 and 4
+        // Bob accounts
         accountRepository.save(Account.builder()
+                .id("account-581")
                 .accountNumber("NL10BANK0000000003")
                 .type(AccountType.CHECKING)
                 .balance(new BigDecimal("1800.00"))
@@ -81,15 +84,17 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         accountRepository.save(Account.builder()
+                .id("account-847")
                 .accountNumber("NL10BANK0000000004")
                 .type(AccountType.SAVINGS)
                 .balance(new BigDecimal("5500.00"))
                 .owner(bob)
                 .build());
 
-        // Payroll account owned by admin: account ID 5
+        // Payroll account owned by admin
         User admin = userRepository.findByUsername("admin").orElseThrow();
         accountRepository.save(Account.builder()
+                .id("account-036")
                 .accountNumber("NL10BANK0000000005")
                 .type(AccountType.CHECKING)
                 .balance(new BigDecimal("999999.00"))
@@ -98,11 +103,11 @@ public class DataSeeder implements ApplicationRunner {
     }
 
     private void seedTransactions() {
-        Account aliceChecking = accountRepository.findById(1L).orElseThrow();
-        Account aliceSavings  = accountRepository.findById(2L).orElseThrow();
-        Account bobChecking   = accountRepository.findById(3L).orElseThrow();
-        Account bobSavings    = accountRepository.findById(4L).orElseThrow();
-        Account payroll       = accountRepository.findById(5L).orElseThrow();
+        Account aliceChecking = accountRepository.findById("account-714").orElseThrow();
+        Account aliceSavings  = accountRepository.findById("account-293").orElseThrow();
+        Account bobChecking   = accountRepository.findById("account-581").orElseThrow();
+        Account bobSavings    = accountRepository.findById("account-847").orElseThrow();
+        Account payroll       = accountRepository.findById("account-036").orElseThrow();
 
         LocalDateTime base = LocalDateTime.now().minusDays(30);
 
@@ -212,8 +217,8 @@ public class DataSeeder implements ApplicationRunner {
                 ╔═════════════════════════════════════════════════╗
                 ║          WORKSHOP SEED CREDENTIALS              ║
                 ╠═════════════════════════════════════════════════╣
-                ║  alice  / alice123  (CUSTOMER, accounts 1 & 2)  ║
-                ║  bob    / bob123    (CUSTOMER, accounts 3 & 4)  ║
+                ║  alice  / alice123  (CUSTOMER)                  ║
+                ║  bob    / bob123    (CUSTOMER)                  ║
                 ║  admin  / admin123  (ADMIN)                     ║
                 ╠═════════════════════════════════════════════════╣
                 ║  H2 console: http://localhost:8080/h2-console   ║

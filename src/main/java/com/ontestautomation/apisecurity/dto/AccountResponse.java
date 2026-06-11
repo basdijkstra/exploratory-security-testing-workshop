@@ -5,7 +5,7 @@ import com.ontestautomation.apisecurity.model.AccountType;
 import java.math.BigDecimal;
 
 public record AccountResponse(
-        Long id,
+        String id,
         String accountNumber,
         AccountType type,
         BigDecimal balance,

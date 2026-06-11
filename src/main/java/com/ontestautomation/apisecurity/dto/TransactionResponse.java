@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 public record TransactionResponse(
         Long id,
-        Long fromAccountId,
-        Long toAccountId,
+        String fromAccountId,
+        String toAccountId,
         BigDecimal amount,
         String description,
         LocalDateTime createdAt

@@ -17,11 +17,11 @@ On startup the seed credentials are printed to the console.
 
 ## Seed Credentials
 
-| Username | Password | Role     | Accounts      |
-|----------|----------|----------|---------------|
-| alice    | alice123 | CUSTOMER | IDs 1 and 2   |
-| bob      | bob123   | CUSTOMER | IDs 3 and 4   |
-| admin    | admin123 | ADMIN    | —             |
+| Username | Password | Role     |
+|----------|----------|----------|
+| alice    | alice123 | CUSTOMER |
+| bob      | bob123   | CUSTOMER |
+| admin    | admin123 | ADMIN    |
 
 ---
 
@@ -69,7 +69,6 @@ Authorization: Bearer <jwt>
 
 | Method | Path             | Description                        | Body                                          |
 |--------|------------------|------------------------------------|-----------------------------------------------|
-| GET    | /accounts        | List accounts                      | —                                             |
 | GET    | /accounts/{id}   | Get account by ID                  | —                                             |
 | POST   | /accounts        | Create a new account               | `{"type":"CHECKING"}`                         |
 | DELETE | /accounts/{id}   | Delete an account                  | —                                             |
@@ -83,8 +82,8 @@ Account types: `CHECKING`, `SAVINGS`
 | GET    | /transactions               | List all transactions                   | —                                                                                              |
 | GET    | /transactions?search={term} | Search transactions by description      | Query param                                                                                    |
 | GET    | /transactions/{id}          | Get transaction by ID                   | —                                                                                              |
-| POST   | /transactions/transfer      | Transfer money between two accounts     | `{"fromAccountId":1,"toAccountId":3,"amount":100.00,"description":"Payment"}`                  |
-| POST   | /transactions/bulk-transfer | Submit multiple transfers in one request | `[{"fromAccountId":1,"toAccountId":3,"amount":10.00,"description":"t1"}, ...]`                |
+| POST   | /transactions/transfer      | Transfer money between two accounts     | `{"fromAccountId":"account-714","toAccountId":"account-581","amount":100.00,"description":"Payment"}` |
+| POST   | /transactions/bulk-transfer | Submit multiple transfers in one request | `[{"fromAccountId":"account-714","toAccountId":"account-581","amount":10.00,"description":"t1"}, ...]` |
 | GET    | /transactions/report        | Full denormalised transaction report    | —                                                                                              |
 
 ### Loans
