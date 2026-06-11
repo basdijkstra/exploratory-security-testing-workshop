@@ -3,13 +3,18 @@ package com.ontestautomation.apisecurity;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
+import java.util.List;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ontestautomation.apisecurity.dto.TokenRequest;
+import com.ontestautomation.apisecurity.dto.TransactionResponse;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -33,7 +38,7 @@ public class TransactionTests {
 
         RestAssured.config = RestAssuredConfig.config().
             objectMapperConfig(ObjectMapperConfig.objectMapperConfig().
-            jackson2ObjectMapperFactory((cls, charset) -> new ObjectMapper()));
+            jackson2ObjectMapperFactory((cls, charset) -> new ObjectMapper().registerModule(new JavaTimeModule())));
 
 		requestSpec = new RequestSpecBuilder().
             setBaseUri("http://localhost").
@@ -76,5 +81,31 @@ public class TransactionTests {
         given().spec(requestSpec).auth().oauth2(adminToken)
         .when().get("/transactions/report")
         .then().statusCode(200).body(not(emptyOrNullString()));    
+    }
+
+    @Test
+    public void getAllTransactionsForAlice_withSearchQuery_shouldReturnOnlyRelevantTransactions() {
+
+        List<TransactionResponse> transactions = 
+        given().spec(requestSpec).auth().oauth2(adminToken).queryParam("search", "Salary")
+        .when().get("/transactions")
+        .then().statusCode(200).extract().jsonPath().getList("$", TransactionResponse.class);
+
+        Assertions.assertTrue(transactions.size() > 0);
+
+        for (TransactionResponse transaction: transactions) {
+            Assertions.assertTrue(transaction.description().contains("Salary"));
+        }
+    }
+
+    @Test
+    public void getAllTransactionsForAlice_usingInjection_shouldReturnAllTransactions() {
+
+        List<TransactionResponse> transactions = 
+        given().spec(requestSpec).auth().oauth2(adminToken).queryParam("search", "' OR 1=1 --")
+        .when().get("/transactions")
+        .then().statusCode(200).extract().jsonPath().getList("$", TransactionResponse.class);
+
+        Assertions.assertTrue(transactions.size() >= 10);
     }
 }
