@@ -1,6 +1,5 @@
 package com.ontestautomation.apisecurity.controller;
 
-import com.ontestautomation.apisecurity.dto.TransactionReport;
 import com.ontestautomation.apisecurity.dto.TransactionResponse;
 import com.ontestautomation.apisecurity.dto.TransferRequest;
 import com.ontestautomation.apisecurity.service.TransactionService;
