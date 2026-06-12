@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record TransactionResponse(
-        Long id,
+        String id,
         String fromAccountId,
         String toAccountId,
         BigDecimal amount,

@@ -30,7 +30,7 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionResponse> getTransaction(@PathVariable Long id) {
+    public ResponseEntity<TransactionResponse> getTransaction(@PathVariable String id) {
         return ResponseEntity.ok(transactionService.getTransaction(id));
     }
 

@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,11 +64,16 @@ public class TransactionService {
         return results.stream().map(this::toResponse).toList();
     }
 
-    // VULNERABILITY (BOLA): fetches by ID only — no ownership check.
-    public TransactionResponse getTransaction(Long id) {
-        return transactionRepository.findById(id)
-                .map(this::toResponse)
+    public TransactionResponse getTransaction(String id) {
+        Transaction tx = transactionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction not found"));
+        String username = currentUser().getUsername();
+        boolean isOwner = (tx.getFromAccount() != null && tx.getFromAccount().getOwner().getUsername().equals(username)) ||
+                          (tx.getToAccount() != null && tx.getToAccount().getOwner().getUsername().equals(username));
+        if (!isOwner) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction not found");
+        }
+        return toResponse(tx);
     }
 
     // VULNERABILITY (Sensitive Business Flow):
@@ -89,6 +95,7 @@ public class TransactionService {
         accountRepository.save(to);
 
         Transaction tx = Transaction.builder()
+                .id(generateId())
                 .fromAccount(from)
                 .toAccount(to)
                 .amount(request.amount())
@@ -114,6 +121,11 @@ public class TransactionService {
         return transactionRepository.findAll().stream()
                 .map(this::toReport)
                 .toList();
+    }
+
+    private String generateId() {
+        int n = 100000 + ThreadLocalRandom.current().nextInt(900000);
+        return "txn-" + n;
     }
 
     private User currentUser() {

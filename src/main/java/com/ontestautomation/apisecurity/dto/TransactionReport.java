@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record TransactionReport(
-        Long id,
+        String id,
         String fromAccountNumber,
         String fromOwner,
         String toAccountNumber,

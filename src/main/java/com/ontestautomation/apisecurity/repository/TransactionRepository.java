@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+public interface TransactionRepository extends JpaRepository<Transaction, String> {
 
     @Query("SELECT t FROM Transaction t WHERE " +
            "(t.fromAccount IS NOT NULL AND t.fromAccount.owner = :user) OR " +

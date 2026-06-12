@@ -112,6 +112,7 @@ public class DataSeeder implements ApplicationRunner {
         LocalDateTime base = LocalDateTime.now().minusDays(30);
 
         transactionRepository.save(Transaction.builder()
+                .id("txn-492")
                 .fromAccount(payroll)
                 .toAccount(aliceChecking)
                 .amount(new BigDecimal("3000.00"))
@@ -120,6 +121,7 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         transactionRepository.save(Transaction.builder()
+                .id("txn-831")
                 .fromAccount(aliceChecking)
                 .toAccount(aliceSavings)
                 .amount(new BigDecimal("500.00"))
@@ -128,6 +130,7 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         transactionRepository.save(Transaction.builder()
+                .id("txn-267")
                 .fromAccount(aliceChecking)
                 .toAccount(bobChecking)
                 .amount(new BigDecimal("120.00"))
@@ -136,6 +139,7 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         transactionRepository.save(Transaction.builder()
+                .id("txn-154")
                 .fromAccount(payroll)
                 .toAccount(bobChecking)
                 .amount(new BigDecimal("3000.00"))
@@ -144,6 +148,7 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         transactionRepository.save(Transaction.builder()
+                .id("txn-739")
                 .fromAccount(bobChecking)
                 .toAccount(bobSavings)
                 .amount(new BigDecimal("300.00"))
@@ -152,6 +157,7 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         transactionRepository.save(Transaction.builder()
+                .id("txn-318")
                 .fromAccount(aliceChecking)
                 .toAccount(bobChecking)
                 .amount(new BigDecimal("75.00"))
@@ -160,6 +166,7 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         transactionRepository.save(Transaction.builder()
+                .id("txn-625")
                 .fromAccount(bobChecking)
                 .toAccount(aliceChecking)
                 .amount(new BigDecimal("50.00"))
@@ -168,6 +175,7 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         transactionRepository.save(Transaction.builder()
+                .id("txn-943")
                 .fromAccount(aliceChecking)
                 .toAccount(null)
                 .amount(new BigDecimal("200.00"))
@@ -176,6 +184,7 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         transactionRepository.save(Transaction.builder()
+                .id("txn-076")
                 .fromAccount(bobChecking)
                 .toAccount(aliceChecking)
                 .amount(new BigDecimal("350.00"))
@@ -184,6 +193,7 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         transactionRepository.save(Transaction.builder()
+                .id("txn-512")
                 .fromAccount(aliceSavings)
                 .toAccount(aliceChecking)
                 .amount(new BigDecimal("1000.00"))
