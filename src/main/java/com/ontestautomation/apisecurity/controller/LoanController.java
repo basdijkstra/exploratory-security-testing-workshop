@@ -48,11 +48,10 @@ public class LoanController {
         return ResponseEntity.ok(loanService.approveLoan(id));
     }
 
+    // VULNERABILITY (BFLA): any authenticated user can reject any loan —
+    // the admin check present on approveLoan() is missing here.
     @PostMapping("/{id}/reject")
-    public ResponseEntity<?> rejectLoan(@PathVariable Long id, Authentication auth) {
-        if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
-        }
+    public ResponseEntity<?> rejectLoan(@PathVariable Long id) {
         return ResponseEntity.ok(loanService.rejectLoan(id));
     }
 }
