@@ -3,6 +3,8 @@ package com.ontestautomation.apisecurity.service;
 import com.ontestautomation.apisecurity.dto.AccountResponse;
 import com.ontestautomation.apisecurity.dto.CreateAccountRequest;
 import com.ontestautomation.apisecurity.model.Account;
+import com.ontestautomation.apisecurity.model.Role;
+import com.ontestautomation.apisecurity.model.User;
 import com.ontestautomation.apisecurity.repository.AccountRepository;
 import com.ontestautomation.apisecurity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -24,9 +25,12 @@ public class AccountService {
     // VULNERABILITY (BOLA): fetches by ID only — no check that the
     // account belongs to the authenticated user.
     public AccountResponse getAccount(String id) {
-        return accountRepository.findById(id)
-                .map(this::toResponse)
+        Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+        if (isCustomer() && account.getOwner().getRole() == Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
+        }
+        return toResponse(account);
     }
 
     public AccountResponse createAccount(CreateAccountRequest request) {
@@ -47,7 +51,9 @@ public class AccountService {
 
     // VULNERABILITY (BOLA): deletes by ID only — no ownership check.
     public void deleteAccount(String id) {
-        if (!accountRepository.existsById(id)) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+        if (isCustomer() && account.getOwner().getRole() == Role.ADMIN) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
         }
         accountRepository.deleteById(id);
@@ -61,6 +67,13 @@ public class AccountService {
                 account.getBalance(),
                 account.getOwner().getUsername()
         );
+    }
+
+    private boolean isCustomer() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User requester = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+        return requester.getRole() == Role.CUSTOMER;
     }
 
     private String generateId() {
