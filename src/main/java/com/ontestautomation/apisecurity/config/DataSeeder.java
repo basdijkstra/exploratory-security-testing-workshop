@@ -207,6 +207,7 @@ public class DataSeeder implements ApplicationRunner {
         User bob   = userRepository.findByUsername("bob").orElseThrow();
 
         loanRepository.save(Loan.builder()
+                .id("loan-283")
                 .applicant(alice)
                 .amount(new BigDecimal("5000.00"))
                 .status(LoanStatus.PENDING)
@@ -214,6 +215,7 @@ public class DataSeeder implements ApplicationRunner {
                 .build());
 
         loanRepository.save(Loan.builder()
+                .id("loan-617")
                 .applicant(bob)
                 .amount(new BigDecimal("15000.00"))
                 .status(LoanStatus.APPROVED)
@@ -224,16 +226,17 @@ public class DataSeeder implements ApplicationRunner {
     private void printCredentials() {
         System.out.println("""
 
-                ╔═════════════════════════════════════════════════╗
-                ║          WORKSHOP SEED CREDENTIALS              ║
-                ╠═════════════════════════════════════════════════╣
-                ║  alice  / alice123  (CUSTOMER)                  ║
-                ║  bob    / bob123    (CUSTOMER)                  ║
-                ║  admin  / admin123  (ADMIN)                     ║
-                ╠═════════════════════════════════════════════════╣
-                ║  H2 console: http://localhost:8080/h2-console   ║
-                ║  JDBC URL:   jdbc:h2:mem:bankdb                 ║
-                ╚═════════════════════════════════════════════════╝
+                ╔══════════════════════════════════════════════════════════╗
+                ║                WORKSHOP SEED CREDENTIALS                 ║
+                ╠══════════════════════════════════════════════════════════╣
+                ║  alice  / alice123  (CUSTOMER)                           ║
+                ║  bob    / bob123    (CUSTOMER)                           ║
+                ║  admin  / admin123  (ADMIN)                              ║
+                ╠══════════════════════════════════════════════════════════╣
+                ║  Swagger:    http://localhost:8080/swagger-ui/index.html ║
+                ║  H2 console: http://localhost:8080/h2-console            ║
+                ║  JDBC URL:   jdbc:h2:mem:bankdb                          ║
+                ╚══════════════════════════════════════════════════════════╝
                 """);
     }
 }

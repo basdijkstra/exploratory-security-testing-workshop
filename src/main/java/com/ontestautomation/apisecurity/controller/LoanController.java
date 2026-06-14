@@ -26,7 +26,7 @@ public class LoanController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LoanResponse> getLoan(@PathVariable Long id) {
+    public ResponseEntity<LoanResponse> getLoan(@PathVariable String id) {
         return ResponseEntity.ok(loanService.getLoan(id));
     }
 
@@ -41,7 +41,7 @@ public class LoanController {
     // an admin-role token (by exploiting the weak JWT secret) can approve
     // their own pending loan.
     @PostMapping("/{id}/approve")
-    public ResponseEntity<?> approveLoan(@PathVariable Long id, Authentication auth) {
+    public ResponseEntity<?> approveLoan(@PathVariable String id, Authentication auth) {
         if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
         }
@@ -51,7 +51,7 @@ public class LoanController {
     // VULNERABILITY (BFLA): any authenticated user can reject any loan —
     // the admin check present on approveLoan() is missing here.
     @PostMapping("/{id}/reject")
-    public ResponseEntity<?> rejectLoan(@PathVariable Long id) {
+    public ResponseEntity<?> rejectLoan(@PathVariable String id) {
         return ResponseEntity.ok(loanService.rejectLoan(id));
     }
 }

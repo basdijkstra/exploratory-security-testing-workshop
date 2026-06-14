@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record LoanResponse(
-        Long id,
+        String id,
         String applicantUsername,
         BigDecimal amount,
         LoanStatus status,
