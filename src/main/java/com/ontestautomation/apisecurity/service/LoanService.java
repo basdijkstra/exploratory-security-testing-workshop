@@ -23,10 +23,11 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final UserRepository userRepository;
 
-    // VULNERABILITY (BOLA): returns every loan in the database —
-    // not filtered to loans belonging to the authenticated user.
     public List<LoanResponse> listLoans() {
-        return loanRepository.findAll().stream()
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        var applicant = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+        return loanRepository.findByApplicant(applicant).stream()
                 .map(this::toResponse)
                 .toList();
     }

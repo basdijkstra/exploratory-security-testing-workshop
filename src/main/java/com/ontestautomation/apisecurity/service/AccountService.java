@@ -49,12 +49,15 @@ public class AccountService {
         return toResponse(accountRepository.save(account));
     }
 
-    // VULNERABILITY (BOLA): deletes by ID only — no ownership check.
     public void deleteAccount(String id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
         if (isCustomer() && account.getOwner().getRole() == Role.ADMIN) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
+        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!account.getOwner().getUsername().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not own this account");
         }
         accountRepository.deleteById(id);
     }
